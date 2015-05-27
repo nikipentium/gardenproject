@@ -1,0 +1,27 @@
+#myBlogsMenu > div {
+    border-style: solid;
+    border-width: 1px;
+}
+#blogBody > div {
+    border-style: solid;
+    border-width: 1px;
+}
+#myBlogsMenu {
+    border-style: solid;
+    border-width: 1px;
+    /*height: 400px;*/
+}
+#blogBody {
+    border-style: solid;
+    border-width: 1px;
+    /*height: 400px;*/
+}
+#commentSection {
+    border-style: solid;
+    border-width: 1px;
+     /*height: 400px;*/
+}
+.myborder{
+    border-style: solid;
+    border-width: 1px;
+}
