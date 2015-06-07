@@ -81,9 +81,9 @@ include_once ("..\php_includes\db_conx.php");
          <head>
          <meta charset="UTF-8"><title>yoursitename Message</title>
          </head>
-         <body style="margin:0px; font-family:Tahoma, Geneva, sans-serif;"><div style="padding:10px; background:#333; font-size:24px; color:#CCC;"><a href="http://localhost/xampp/phptest/Social-Network/root/signup.php">
+         <body style="margin:0px; font-family:Tahoma, Geneva, sans-serif;"><div style="padding:10px; background:#333; font-size:24px; color:#CCC;"><a href="http://130.211.160.107/gardenproject/root/signup.php">
          </a>Garden Project Account Activation</div><div style="padding:24px; font-size:17px;">Hello ' . $username . ',<br /><br />Click the link below to activate your account when ready:<br /><br />
-         <a href="http://localhost/xampp/phptest/gardenproject/root/activation.php?id=' . $uid . '&u=' . $username . '&e=' . $email . '&p=' . $p_hash . '">
+         <a href="http://130.211.160.107/gardenproject/root/activation.php?id=' . $uid . '&u=' . $username . '&e=' . $email . '&p=' . $p_hash . '">
          Click here to activate your account now</a><br /><br />Login after successful activation using your:<br />* E-mail Address: <b>' . $email . '</b></div></body></html>';
 
             $subject = 'Garden Account Activation';
