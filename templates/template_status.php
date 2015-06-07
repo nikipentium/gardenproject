@@ -8,7 +8,8 @@ if($isOwner == "yes"){
 	$status_ui = '<textarea id="statustext" class="form-control" onkeyup="statusMax(this,250)" placeholder="Hi '.$log_username.', say something to '.$u.'"></textarea>';
 	$status_ui .= '<button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'c\',\''.$u.'\',\'statustext\')">Post</button>';
 }
-?><?php 
+?>
+<?php // display the old data 
 $sql = "SELECT * FROM status WHERE account_name='$u' AND type='a' OR account_name='$u' AND type='c' ORDER BY postdate DESC LIMIT 20";
 $query = mysqli_query($db_conx, $sql);
 $statusnumrows = mysqli_num_rows($query);
@@ -56,7 +57,7 @@ while ($row = mysqli_fetch_array($query, MYSQLI_ASSOC)) {
 function postToStatus(action,type,user,ta){
 	var data = document.getElementById(ta).value;
 	if(data == ""){
-		alert("Type something first weenis");
+		alert("Please type a message");
 		return false;
 	}
 	document.getElementById("statusBtn").disabled = true;

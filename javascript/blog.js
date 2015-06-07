@@ -1,15 +1,8 @@
 /*window init
+ * in blog_comments.js
  * Add event handlers
- * onclick myblogs menu button
+ * onclick blogs menu button
  */
-window.onload = initPage;
-
-function initPage() {
-	// get elements that require events
-	var addBlogButton = document.getElementById("addBlogButton");
-	// set the handler for each element
-	addBlogButton.onclick = createBlogHTML;
-}
 
 function createBlogHTML() {
 	//should create a page title, link label, pagebody text area and create page button
@@ -172,9 +165,11 @@ function editBlog(pid)
 			if(ajaxReturn(ajax) == true){
 				var response = ajax.responseText;
 				var response = response.trim();
-				if(response.trim() == "success"){
-					alert(response);
-					status.innerHTML = response;
+				var responseArray = response.split("|");
+				if(responseArray[1] == "success"){
+					alert(responseArray[1]);
+					blogForm.innerHTML = "View your blog<br/><a href='http://localhost/xampp/phptest/gardenproject/root/blogs.php?pid="+responseArray[0]+"'>Click here</a>";
+					window.scrollTo(0,0);
 				}
 				else
 				{
@@ -186,4 +181,60 @@ function editBlog(pid)
 		};
 		ajax.send("blogTitle="+blogTitle+"&blogLink="+blogLink+"&blogBody="+blogBody+"&pid="+pid+"&blogTags="+jsonTags);
 	}
+}
+function display_product_form(){
+	//called on click add product button
+	//create add product form
+	//make a dropdown select box with all products in market
+	//make a message box for expert to type message
+	//submit button
+	//on submit data gets stored in the blog_product table
+	var product_form = document.getElementById('product_form');
+	var html = "";
+	html += '<div class="form-group" >';
+	html += '<label class="control-label col-sm-12">Product Name:</label>';
+	html += '<select class="form-control" name="productsMenu" id="productsMenu">';
+    html += '<div class="form-group" >';
+    html += '<label class="control-label col-sm-12">Message:</label>';  
+	html += '<input  name="message" class="form-control" type="text" id="message" placeholder="Please mention the relation" size="255" />';                                              
+	html += '</div>';           
+	html +='<div class="form-group">';							                    
+	html +='<input class="btn btn-default" type="submit" onclick="add_product()" name="button" id="button" value="Submit" /></div> ';								                                     
+    product_form.innerHTML = html;    
+    var productsMenu = document.getElementById('productsMenu'); 
+	// get the product names from database using AJAX
+	var ajax = ajaxObj("POST","ajax/updateProductOptions.php");//returns the product names in JSON
+	ajax.onreadystatechange = function(){
+		if(ajaxReturn(ajax) == true){
+			var response = ajax.responseText.trim();
+			if(response != "no products"){
+				var result = JSON.parse(response);	
+				alert(result);
+				for(i=0;i<result.length;i++) {
+			    	productsMenu.options[productsMenu.options.length] = new Option(result[i], result[i]);
+				}		
+			}
+		}
+	};
+	ajax.send(null);
+}
+function add_product(){
+	//store input in database using ajax
+	var productsMenu = document.getElementById('productsMenu');
+	var option = productsMenu.options[productsMenu.selectedIndex].value;
+	var message = document.getElementById('message').value;
+	var product_form = document.getElementById('product_form');
+	//alert(option+ " "+message+ " " +pageid);
+	//send message,product name,blog_id using ajax to ajax/add_product_blog.php
+	var ajax = ajaxObj("POST","ajax/add_product_blog.php");//returns the product names in JSON
+	ajax.onreadystatechange = function(){
+		if(ajaxReturn(ajax) == true){
+			var response = ajax.responseText.trim();
+			alert(response);
+		}
+	};
+	ajax.send("product_name="+option+"&message="+message+"&blog_id="+pageid);
+}
+function get_products(){
+	//onload it will get the associated products from blog_product database
 }

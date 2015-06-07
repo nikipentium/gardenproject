@@ -106,6 +106,14 @@ if($user_ok == true){
 				</div>
 				</div>
 			</div>
+			<div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
 			<?php
 			include_once ("templates/template_page_bottom.php");
 			?>

@@ -19,6 +19,7 @@ if($user_ok == true){
         <script src="javascript/ajax.js"></script>
         <script src="javascript/login.js"></script>
 	</head>
+
 	<body>
 		<div class="container">
 			<?php
@@ -60,6 +61,14 @@ if($user_ok == true){
 			</div>
 			</div>
 			</div>
+			<div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
 			<?php
 				include_once ("templates/template_page_bottom.php");
 			?>

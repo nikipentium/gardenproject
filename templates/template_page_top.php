@@ -28,7 +28,7 @@ if(isset($user_ok) && $user_ok == true) {
               <a class="btn btn-default" href="ecommerce.php">Ecommerce</a>
               <a class="btn btn-default" href="indianscience.php">Indian Science</a>';
     $welcome = '<h5>Welcome '.$log_username.'</h5>';
-    $searchsection=' <button class="btn" type="button" id="searchButton" onclick = toggleElement("search")>
+    $searchsection=' <button class="btn" type="button" id="searchButton" onclick = toggleElement("searchbar")>
                      <img height=20 width=20 src="images/Search.png" alt="search">
                  </button>';    
 }
@@ -71,24 +71,26 @@ if(isset($user_ok) && $user_ok == true) {
                 ?>
             </div>
         </div>
-        <div class="row" id="search">
-            <div class="col-md-12">
+        <div class='row' id='searchbar' style="display: none">
+            <div class='col-md-12'>
                 <br />
-                <div class="row">
-                    <div class="col-md-9">
-                          <input class="form-control" type="text" id="searchquery" placeholder="Search The Garden Project Website" />  
+                <div class='row'>
+                    <form class="form" id="searchForm" method="post" action="search_pagination.php">
+                    <div class='col-md-9'>
+                          <input class='form-control' type='text' name='searchquery' id='searchquery' placeholder='Search The Garden Project Website' />  
                     </div>
-                    <div class="col-md-2">
-                        <select class="form-control">
+                    <div class='col-md-2'>
+                        <select class='form-control' id="searchOption" name='option'>
                           <option>Blog Tags</option>
                           <option>People</option>
                         </select>
                     </div>
-                    <div class="col-md-1">
-                         <button class="btn form-control" type="button" id="searchButton" onclick="search()">
-                             <img height=20 width=20 src="images/Search.png" alt="search">
+                    <div class='col-md-1'>
+                         <button class='btn form-control' type='submit' id='searchBtn'>
+                             <img height=20 width=20 src='images/Search.png' alt='search'>
                          </button>
                     </div>
+                    </form>
                 </div>
                 <br />
             </div>

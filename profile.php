@@ -9,6 +9,7 @@ $profile_pic_btn = "";
 $avatar_form = "";
 $country = "";
 $joindate = "";
+$profession = "";
 $lastsession = "";
 // Make sure the _GET username is set, and sanitize it
 if(isset($_GET["u"])){
@@ -45,12 +46,22 @@ while ($row = mysqli_fetch_array($user_query, MYSQLI_ASSOC)) {
     $userlevel = $row["userlevel"];
     $avatar = $row["avatar"];
     $signup = $row["signup"];
+    $profession = $row["profession"];
     $lastlogin = $row["lastlogin"];
     $joindate = strftime("%b %d, %Y", strtotime($signup));
     $lastsession = strftime("%b %d, %Y", strtotime($lastlogin));
 }
 if($gender == "f"){
     $sex = "Female";
+}
+if($userlevel == 'a'){
+    $userlevel = "Normal user";
+}
+if($userlevel == 'b'){
+    $userlevel = "Expert";
+}
+if($userlevel == 'c'){
+    $userlevel = "Admin";
 }
 $profile_pic = '<img src="user/'.$u.'/'.$avatar.'" alt="'.$u.'">';
 if($avatar == NULL){
@@ -67,14 +78,33 @@ if($u != $log_username && $user_ok == true){
 }
 ?>
 <?php 
-$friend_button = '<button disabled>Request As Friend</button>';
+$friend_button = '<button class="btn btn-default" disabled style="display:none">Add Friend</button>';
 // LOGIC FOR FRIEND BUTTON
 if($isFriend == true){
-    $friend_button = '<button onclick="friendToggle(\'unfriend\',\''.$u.'\',\'friendBtn\')">Unfriend</button>';
+    $friend_button = '<button style="display:block" onclick="friendToggle(\'unfriend\',\''.$u.'\',\'friendBtn\')">Unfriend</button>';
 } else if($user_ok == true && $u != $log_username){
-    $friend_button = '<button onclick="friendToggle(\'friend\',\''.$u.'\',\'friendBtn\')">Request As Friend</button>';
+    $friend_button = '<button style="display:block" onclick="friendToggle(\'friend\',\''.$u.'\',\'friendBtn\')">Add Friend</button>';
 }
-?><?php
+?>
+<?php
+$isSubscribe = false;
+if($u != $log_username && $user_ok == true){
+    $friend_check = "SELECT id FROM friends WHERE user1='$log_username' AND user2='$u' AND accepted='1' OR user1='$u' AND user2='$log_username' AND accepted='1' LIMIT 1";
+    if(mysqli_num_rows(mysqli_query($db_conx, $friend_check)) > 0){
+        $isSubscribe = true;
+    }
+}
+?>
+<?php 
+$subscribe_button = '<button class="btn btn-default" disabled style="display:none">Subscribe</button>';
+// LOGIC FOR FRIEND BUTTON
+if($isSubscribe == true){
+    $subscribe_button = '<button style="display:block" onclick="subscribeToggle(\'unsubscribe\',\''.$u.'\',\'subscribeBtn\')">Unsubscribe</button>';
+} else if($user_ok == true && $u != $log_username){
+    $subscribe_button = '<button style="display:block" onclick="subscribeToggle(\'subscribe\',\''.$u.'\',\'subscribeBtn\')">Subscribe</button>';
+}
+?>
+<?php
 $friendsHTML = '';
 $friends_view_all_link = '';
 $sql = "SELECT COUNT(id) FROM friends WHERE user1='$u' AND accepted='1' OR user2='$u' AND accepted='1'";
@@ -84,7 +114,7 @@ $friend_count = $query_count[0];
 if($friend_count < 1){
     $friendsHTML = $u." has no friends yet";
 } else {
-    $max = 18;
+    $max = 10;
     //dont understand after this
     $all_friends = array();
     $sql = "SELECT user1 FROM friends WHERE user2='$u' AND accepted='1' ORDER BY RAND() LIMIT $max";
@@ -119,7 +149,7 @@ if($friend_count < 1){
         } else {
             $friend_pic = 'images/avatardefault.gif';
         }
-        $friendsHTML .= '<a href="profile.php?u='.$friend_username.'"><img class="friendpics" src="'.$friend_pic.'" alt="'.$friend_username.'" title="'.$friend_username.'"></a>';
+        $friendsHTML .= '<a href="profile.php?u='.$friend_username.'"><img class="friendpics" height=300 width=200 src="'.$friend_pic.'" alt="'.$friend_username.'" title="'.$friend_username.'"></a>';
     }
 }
 ?>
@@ -135,6 +165,7 @@ if($friend_count < 1){
         <script src="javascript/profile.js"></script>
         <link rel="stylesheet" type="text/css" href="style/bootstrap/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="style/style.css">
+        <link rel="stylesheet" type="text/css" href="style/profile.css">
     </head>
     <body>
         <div class="container">
@@ -144,38 +175,82 @@ if($friend_count < 1){
             <div class="row" id="pageMiddle">
                 <div class="col-md-12">
                 <div class="row">
-                    <div class="col-md-8">
-                      <h2><?php echo $u; ?></h2>
-                      <p>Is the viewer the page owner, logged in and verified? <b><?php echo $isOwner; ?></b></p>
-                      <p>Gender: <?php echo $sex; ?></p>
-                      <p>Country: <?php echo $country; ?></p>
-                      <p>User Level: <?php echo $userlevel; ?></p>
-                      <p>Join Date: <?php echo $joindate; ?></p>
-                      <p>Last Session: <?php echo $lastsession; ?></p>
-                      <hr />
-                    </div>   
-                    <div class="col-md-4">
-                        <div id="profile_pic_box" ><?php echo $profile_pic_btn; ?><?php echo $avatar_form; ?><?php echo $profile_pic; ?></div>
-                    </div>                 
+                    <div class="col-md-3 basic" id="profilePic">
+                        <div class="row" id="username" align="center">
+                            <div class="col-md-12">
+                                <h4><?php echo"$u" ?></h4>
+                            </div>
+                        </div>
+                        <div class="row" id="avatar" align="center">
+                            <div class="col-md-12">
+                                <?php echo $profile_pic_btn; ?>
+                                <?php echo $avatar_form; ?>
+                                <?php echo $profile_pic; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row basic" id="aboutuser">
+                            <div class="col-md-8">
+                                <h2><strong>About</strong></h2><hr/>                     
+                                <h3>Profession : <?php echo $profession ?></h3>
+                                <h3>Country : <?php echo $country ?></h3>
+                                <h3>Join Date : <?php echo $joindate; ?></h3>
+                                <h3>User Level : <?php echo $userlevel; ?></h3>
+                                <h3>Gender : <?php echo $sex; ?></h3>
+                            </div>
+                            <div class="col-md-1">
+                                 <p><span id="friendBtn"><?php echo $friend_button; ?></span>                       
+                            </div>
+                            <div class="col-md-3">
+                                 <p><span id="subscribeBtn"><?php echo $subscribe_button; ?></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                          <p>Friend Button: <span id="friendBtn"><?php echo $friend_button; ?></span>
-                          <?php echo $u." has ".$friend_count." friends"; ?>
-                          <?php echo $friends_view_all_link; ?></p>
-                          <hr />
-                          <p><?php echo $friendsHTML; ?></p>
-                          <hr />
-                    </div>                    
-                </div>
-                 <div class="row">
-                     <?php include_once("templates/template_status.php"); ?>                 
+                    <div class="col-md-4 basic" id="friendBox">
+                        <div class="row">
+                            <div class="col-md-12 basic">
+                                <?php 
+                                    if($friend_count == 1){
+                                         echo $u." has ".$friend_count." friend"; 
+                                    }
+                                    else {
+                                        echo $u." has ".$friend_count." friends"; 
+                                    }                                 
+                                ?>
+                                <div>
+                                    <p><?php echo $friendsHTML; ?></p>
+                                </div>
+                                <p><?php echo $friends_view_all_link; ?></p>
+                            </div>
+                            <div class="col-md-12 basic">
+                                subscribers
+                              
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 basic" id="wall">
+                        <h3><?php echo"$u" ?>'s Wall</h3>
+                        <div>
+                            <?php include_once("templates/template_status.php"); ?>     
+                        </div>
+                    </div>
                 </div>
             </div>
             </div>
             <?php
             include_once ("templates/template_page_bottom.php");
             ?>
+        </div>
+        <div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
         </div>
     </body>
 </html>

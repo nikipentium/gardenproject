@@ -1,37 +1,34 @@
 <?php
-     /* isOwner
-      * isGuest
+     /* pageOwner
+      * not pageOwner
       * */
-     $status_ui = '<textarea class="form-control" id="statustext" onkeyup="statusMax(this,250)" placeholder="What&#39;s new with you '.$u.'?"></textarea>';
-    $status_ui .= '<button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'a\',\''.$u.'\',\'statustext\')">Post</button>';
+    $status_ui = "";
+    $statuslist = "";
+    if($pageOwner != "yes"){
+        $status_ui = '<textarea id="statustext" class="form-control" onkeyup="statusMax(this,250)" placeholder="Hi '.$log_username.', do you have a query?"></textarea>';
+        $status_ui .= '<button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'c\',\''.$pageid.'\',\'statustext\')">Post</button>';
+    }
 ?>
-<!--<?php
+<?php
 $status_ui = "";
 $statuslist = "";
-if($isOwner == "yes"){
-    $status_ui = '<textarea class="form-control" id="statustext" onkeyup="statusMax(this,250)" placeholder="What&#39;s new with you '.$u.'?"></textarea>';
-    $status_ui .= '<button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'a\',\''.$u.'\',\'statustext\')">Post</button>';
-} else if($isFriend == true && $log_username != $u){
-    $status_ui = '<textarea id="statustext" class="form-control" onkeyup="statusMax(this,250)" placeholder="Hi '.$log_username.', say something to '.$u.'"></textarea>';
-    $status_ui .= '<button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'c\',\''.$u.'\',\'statustext\')">Post</button>';
+if($pageOwner != "yes"){
+    $status_ui = '<textarea id="statustext" class="form-control" onkeyup="statusMax(this,250)" placeholder="Hi '.$log_username.', say about the blog"></textarea>';
+    $status_ui .= '<button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'b\',\''.$pageid.'\',\'statustext\')">Post</button>';
 }
 ?><?php 
-$sql = "SELECT * FROM status WHERE account_name='$u' AND type='a' OR account_name='$u' AND type='c' ORDER BY postdate DESC LIMIT 20";
+$sql = "SELECT * FROM status WHERE blog_id='$pageid' AND type='a' ORDER BY postdate DESC LIMIT 20";
 $query = mysqli_query($db_conx, $sql);
 $statusnumrows = mysqli_num_rows($query);
 while ($row = mysqli_fetch_array($query, MYSQLI_ASSOC)) {
     $statusid = $row["id"];
-    $account_name = $row["account_name"];
+    $blog_id = $row["blog_id"];
     $author = $row["author"];
     $postdate = $row["postdate"];
     $data = $row["data"];
     $data = nl2br($data);
     $data = str_replace("&amp;","&",$data);
     $data = stripslashes($data);
-    $statusDeleteButton = '';
-    if($author == $log_username || $account_name == $log_username ){
-        $statusDeleteButton = '<span id="sdb_'.$statusid.'"><a href="#" onclick="return false;" onmousedown="deleteStatus(\''.$statusid.'\',\'status_'.$statusid.'\');" title="DELETE THIS STATUS AND ITS REPLIES">delete status</a></span> &nbsp; &nbsp;';
-    }
     // GATHER UP ANY STATUS REPLIES
     $status_replies = "";
     $query_replies = mysqli_query($db_conx, "SELECT * FROM status WHERE osid='$statusid' AND type='b' ORDER BY postdate ASC");
@@ -46,10 +43,6 @@ while ($row = mysqli_fetch_array($query, MYSQLI_ASSOC)) {
             $replydata = str_replace("&am
             p;","&",$replydata);
             $replydata = stripslashes($replydata);
-            $replyDeleteButton = '';
-            if($replyauthor == $log_username || $account_name == $log_username ){
-                $replyDeleteButton = '<span id="srdb_'.$statusreplyid.'"><a href="#" onclick="return false;" onmousedown="deleteReply(\''.$statusreplyid.'\',\'reply_'.$statusreplyid.'\');" title="DELETE THIS COMMENT">remove</a></span>';
-            }
             $status_replies .= '<div id="reply_'.$statusreplyid.'" class="reply_boxes"><div><b>Reply by <a href="profile.php?u='.$replyauthor.'">'.$replyauthor.'</a> '.$replypostdate.':</b> '.$replyDeleteButton.'<br />'.$replydata.'</div></div>';
         }
     }
@@ -58,103 +51,12 @@ while ($row = mysqli_fetch_array($query, MYSQLI_ASSOC)) {
         $statuslist .= '<textarea id="replytext_'.$statusid.'" class="replytext form-control" onkeyup="statusMax(this,250)" placeholder="write a comment here"></textarea><button id="replyBtn_'.$statusid.'" onclick="replyToStatus('.$statusid.',\''.$u.'\',\'replytext_'.$statusid.'\',this)">Reply</button>';   
     }
 }
-?>-->
+?>
 <script>
-function postToStatus(action,type,user,ta){
-    var data = document.getElementById(ta).value;
-    if(data == ""){
-        alert("Type something first weenis");
-        return false;
-    }
-    document.getElementById("statusBtn").disabled = true;
-    var ajax = ajaxObj("POST", "php_parsers/status_system.php");
-    ajax.onreadystatechange = function() {
-        if(ajaxReturn(ajax) == true) {
-            var datArray = ajax.responseText.split("|");
-            if(datArray[0] == "post_ok"){
-                var sid = datArray[1];
-                data = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br />").replace(/\r/g,"<br />");
-                var currentHTML = _("statusarea").innerHTML;
-                document.getElementById("statusarea").innerHTML = '<div id="status_'+sid+'" class="status_boxes"><div><b>Posted by you just now:</b> <span id="sdb_'+sid+'"><a href="#" onclick="return false;" onmousedown="deleteStatus(\''+sid+'\',\'status_'+sid+'\');" title="DELETE THIS STATUS AND ITS REPLIES">delete status</a></span><br />'+data+'</div></div><textarea id="replytext_'+sid+'" class="replytext" onkeyup="statusMax(this,250)" placeholder="write a comment here"></textarea><button id="replyBtn_'+sid+'" onclick="replyToStatus('+sid+',\'<?php echo $u; ?>\',\'replytext_'+sid+'\',this)">Reply</button>'+currentHTML;
-                document.getElementById("statusBtn").disabled = false;
-                document.getElementById(ta).value = "";
-            } else {
-                alert(ajax.responseText);
-            }
-        }
-    }
-    ajax.send("action="+action+"&type="+type+"&user="+user+"&data="+data);
-}
-function replyToStatus(sid,user,ta,btn){
-    var data = document.getElementById(ta).value;
-    if(data == ""){
-        alert("Type something first weenis");
-        return false;
-    }
-    document.getElementById("replyBtn_"+sid).disabled = true;
-    var ajax = ajaxObj("POST", "php_parsers/status_system.php");
-    ajax.onreadystatechange = function() {
-        if(ajaxReturn(ajax) == true) {
-            var datArray = ajax.responseText.split("|");
-            if(datArray[0] == "reply_ok"){
-                var rid = datArray[1];
-                data = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br />").replace(/\r/g,"<br />");
-                document.getElementById("status_"+sid).innerHTML += '<div id="reply_'+rid+'" class="reply_boxes"><div><b>Reply by you just now:</b><span id="srdb_'+rid+'"><a href="#" onclick="return false;" onmousedown="deleteReply(\''+rid+'\',\'reply_'+rid+'\');" title="DELETE THIS COMMENT">remove</a></span><br />'+data+'</div></div>';
-                document.getElementById("replyBtn_"+sid).disabled = false;
-                document.getElementById(ta).value = "";
-            } else {
-                alert(ajax.responseText);
-            }
-        }
-    }
-    ajax.send("action=status_reply&sid="+sid+"&user="+user+"&data="+data);
-}
-function deleteStatus(statusid,statusbox){
-    var conf = confirm("Press OK to confirm deletion of this status and its replies");
-    if(conf != true){
-        return false;
-    }
-    var ajax = ajaxObj("POST", "php_parsers/status_system.php");
-    ajax.onreadystatechange = function() {
-        if(ajaxReturn(ajax) == true) {
-            if(ajax.responseText == "delete_ok"){
-                document.getElementById(statusbox).style.display = 'none';
-                document.getElementById("replytext_"+statusid).style.display = 'none';
-                document.getElementById("replyBtn_"+statusid).style.display = 'none';
-            } else {
-                alert(ajax.responseText);
-            }
-        }
-    }
-    ajax.send("action=delete_status&statusid="+statusid);
-}
-function deleteReply(replyid,replybox){
-    var conf = confirm("Press OK to confirm deletion of this reply");
-    if(conf != true){
-        return false;
-    }
-    var ajax = ajaxObj("POST", "php_parsers/status_system.php");
-    ajax.onreadystatechange = function() {
-        if(ajaxReturn(ajax) == true) {
-            if(ajax.responseText == "delete_ok"){
-                _(replybox).style.display = 'none';
-            } else {
-                alert(ajax.responseText);
-            }
-        }
-    }
-    ajax.send("action=delete_reply&replyid="+replyid);
-}
-function statusMax(field, maxlimit) {
-    if (field.value.length > maxlimit){
-        alert(maxlimit+" maximum character limit reached");
-        field.value = field.value.substring(0, maxlimit);
-    }
-}
 </script>
 <div id="statusui" class="col-md-12">
-  <textarea class="form-control" id="statustext" onkeyup="statusMax(this,250)" placeholder="What do you think about this article"></textarea>
+  <?php echo $status_ui; ?>
 </div>
 <div id="statusarea" class="col-md-12">
-  <button class="btn btn-primary" id="statusBtn" onclick="postToStatus(\'status_post\',\'a\',\''.$u.'\',\'statustext\')">Post</button>
+  <?php echo $statuslist; ?>
 </div>

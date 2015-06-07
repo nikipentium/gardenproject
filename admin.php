@@ -18,8 +18,11 @@ else{
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="style/bootstrap/bootstrap.js"></script>
         <script src="javascript/main.js"></script>
         <script src="javascript/ajax.js"></script>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="style/bootstrap/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="style/style.css">
         <title>admin page</title>
@@ -52,6 +55,14 @@ else{
                 </div>
             </div>
             </div>
+            <div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
             <?php
             include_once ("templates/template_page_bottom.php");
             ?>

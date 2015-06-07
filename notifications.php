@@ -6,7 +6,7 @@ if($user_ok != true || $log_username == ""){
     exit();
 }
 $notification_list = "";
-$sql = "SELECT * FROM notifications WHERE username LIKE BINARY '$log_username' ORDER BY date_time DESC";
+$sql = "SELECT * FROM notifications WHERE username LIKE BINARY '$log_username' AND app='Status Post' or app='Status Reply' ORDER BY date_time DESC";
 $query = mysqli_query($db_conx, $sql);
 $numrows = mysqli_num_rows($query);
 if($numrows < 1){
@@ -72,19 +72,40 @@ if($numrows < 1){
             include_once ("templates/template_page_top.php");
             ?>
            <div class="row" id="pageMiddle">
-                <div class="col-md-12">
-                  <div class="row">
+               <div class="col-md-2 myborder" id="menuContainer">
+                    <div>
+						<h3> Notifications</h3>
+						<hr />
+					</div>
+					<div class="btn-group-vertical">
+						<a class="btn btn-primary" href="notifications.php">Social Network</a>
+						<a class="btn btn-primary" onclick="display_notes()">Indian Science</a>
+					</div>
+		      </div>
+                <div class="col-md-10 myborder">
+                  <div class="row" id "note_container">
+                      <div id="num_notes_container" style="display: none" class="col-md-12">
+                          <h3 id="num_notes"></h3>
+                      </div>
                       <div id="notesBox" class="col-md-6">
-                          <h2>Notifications</h2>
+                          <h2>Wall Notifications</h2>
                           <?php echo $notification_list; ?>
                       </div>
                       <div id="friendReqBox" class="col-md-6">
                           <h2>Friend Requests</h2>
                           <?php echo $friend_requests; ?>
                      </div>
+                   </div>
                 </div>
             </div>
-            </div>
+               <div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
             <?php
             include_once ("templates/template_page_bottom.php");
             ?>

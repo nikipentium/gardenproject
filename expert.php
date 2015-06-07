@@ -17,9 +17,9 @@ else{
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="javascript/ajax.js"></script>
-        <script src="javascript/expert.js"></script>
         <script src="javascript/main.js"></script>
+        <script src="javascript/ajax.js"></script>
+        <script src="javascript/search.js"></script>
         <link rel="stylesheet" type="text/css" href="style/bootstrap/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="style/style.css">
         <link rel="stylesheet" type="text/css" href="style/expert.css">
@@ -35,9 +35,9 @@ else{
                 <div class="row">
                     <div class="col-md-2" id="menuContainer">
                           <div class="btn-group-vertical">
-                             <button type="button" class="btn btn-primary">Dashboard</button>
-                             <button type="button" class="btn btn-primary" id="viewBlogButton">My Blogs</button>
-                             <button type="button" class="btn btn-primary">My Polls</button>
+                              <a href="blogs.php"><button type="button" class="btn btn-primary" id="viewBlogButton">My Blogs</button></a>
+                             <!--<button type="button" class="btn btn-primary">Dashboard</button>
+                              <button type="button" class="btn btn-primary">My Polls</button>-->
                           </div>
                     </div>
                     <div class="col-md-10" id="middleContainer">
@@ -46,6 +46,14 @@ else{
                 </div>
             </div>
             </div>
+            <div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
             <?php
             include_once ("templates/template_page_bottom.php");
             ?>
